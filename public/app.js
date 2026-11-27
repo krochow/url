@@ -12,7 +12,16 @@ const feedbackEl = document.getElementById("form-feedback");
 const linksContainer = document.getElementById("links-container");
 const refreshBtn = document.getElementById("refresh-btn");
 
+const qrModal = document.getElementById("qr-modal");
+const qrModalTitle = document.getElementById("qr-modal-title");
+const qrModalUrl = document.getElementById("qr-modal-url");
+const qrCanvas = document.getElementById("qr-canvas");
+const qrDownloadBtn = document.getElementById("qr-download-btn");
+const qrCloseBtn = document.getElementById("qr-close-btn");
+const qrCloseX = document.getElementById("qr-close-x");
+
 let currentUser = null;
+let activeQrSlug = "";
 
 const GOOGLE_G_SVG = `
   <svg class="h-4 w-4 shrink-0" viewBox="0 0 24 24" aria-hidden="true">
@@ -43,9 +52,66 @@ function showFeedback(message, isError = false) {
     : "rounded-xl border border-emerald-500/40 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-300";
 }
 
+function showCreatedFeedback(link, shortUrl) {
+  feedbackEl.className =
+    "flex flex-wrap items-center justify-between gap-3 rounded-xl border border-emerald-500/40 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-300";
+  feedbackEl.innerHTML = `
+    <span class="min-w-0 truncate">
+      Created short link: <a href="/${encodeURIComponent(link.slug)}" target="_blank" rel="noopener" class="font-mono font-semibold underline hover:text-emerald-200">${escapeHtml(shortUrl)}</a>
+    </span>
+    <button
+      id="banner-qr-btn"
+      type="button"
+      class="shrink-0 rounded-lg border border-emerald-400/40 bg-emerald-500/20 px-3 py-1 text-xs font-medium text-emerald-100 transition hover:bg-emerald-500/30"
+    >
+      QR Code
+    </button>
+  `;
+
+  document.getElementById("banner-qr-btn").addEventListener("click", () => {
+    openQrModal(link.slug, shortUrl, link.title);
+  });
+}
+
 function clearFeedback() {
   feedbackEl.className = "hidden";
   feedbackEl.textContent = "";
+}
+
+function openQrModal(slug, shortUrl, title) {
+  if (!window.QRCode) {
+    showFeedback("QR Code library is still loading. Please try again.", true);
+    return;
+  }
+
+  activeQrSlug = slug;
+  qrModalTitle.textContent = title ? title : `/${slug}`;
+  qrModalUrl.textContent = shortUrl;
+
+  window.QRCode.toCanvas(
+    qrCanvas,
+    shortUrl,
+    {
+      width: 224,
+      margin: 2,
+      color: {
+        dark: "#0f172a",
+        light: "#ffffff"
+      }
+    },
+    (err) => {
+      if (err) {
+        showFeedback("Failed to generate QR code.", true);
+        return;
+      }
+      qrModal.classList.remove("hidden");
+    }
+  );
+}
+
+function closeQrModal() {
+  qrModal.classList.add("hidden");
+  activeQrSlug = "";
 }
 
 function switchToLoggedOutView() {
@@ -53,6 +119,7 @@ function switchToLoggedOutView() {
   authLoading.classList.add("hidden");
   dashboardView.classList.add("hidden");
   landingView.classList.remove("hidden");
+  closeQrModal();
   clearFeedback();
   renderHeaderAuth();
 }
@@ -180,7 +247,7 @@ function renderLinks(links) {
               ${escapeHtml(link.target_url)}
             </p>
           </div>
-          <div class="flex items-center gap-2 shrink-0">
+          <div class="flex flex-wrap items-center gap-2 shrink-0">
             <span class="rounded-lg border border-slate-700/80 bg-slate-800/80 px-2.5 py-1 text-xs font-medium text-slate-300">
               ${link.clicks} ${link.clicks === 1 ? "click" : "clicks"}
             </span>
@@ -190,6 +257,15 @@ function renderLinks(links) {
               class="copy-btn rounded-lg border border-slate-700 bg-slate-800 px-3 py-1.5 text-xs font-medium text-slate-200 transition hover:bg-slate-700"
             >
               Copy
+            </button>
+            <button
+              type="button"
+              data-qr-slug="${escapeHtml(link.slug)}"
+              data-qr-url="${escapeHtml(shortUrl)}"
+              data-qr-title="${escapeHtml(link.title || "")}"
+              class="qr-btn rounded-lg border border-indigo-500/30 bg-indigo-500/10 px-3 py-1.5 text-xs font-medium text-indigo-300 transition hover:bg-indigo-500/20"
+            >
+              QR Code
             </button>
             <button
               type="button"
@@ -206,6 +282,12 @@ function renderLinks(links) {
 
   linksContainer.querySelectorAll(".copy-btn").forEach((btn) => {
     btn.addEventListener("click", () => copyToClipboard(btn.dataset.copy, btn));
+  });
+
+  linksContainer.querySelectorAll(".qr-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      openQrModal(btn.dataset.qrSlug, btn.dataset.qrUrl, btn.dataset.qrTitle);
+    });
   });
 
   linksContainer.querySelectorAll(".delete-btn").forEach((btn) => {
@@ -294,7 +376,7 @@ form.addEventListener("submit", async (e) => {
     }
 
     const shortUrl = `${window.location.origin}/${data.link.slug}`;
-    showFeedback(`Created short link: ${shortUrl}`);
+    showCreatedFeedback(data.link, shortUrl);
     form.reset();
     await loadLinks();
   } catch (err) {
@@ -302,6 +384,27 @@ form.addEventListener("submit", async (e) => {
   } finally {
     submitBtn.disabled = false;
     submitBtn.innerHTML = "<span>Shorten URL</span>";
+  }
+});
+
+qrDownloadBtn.addEventListener("click", () => {
+  if (!activeQrSlug) return;
+  const link = document.createElement("a");
+  link.download = `${activeQrSlug}-qrcode.png`;
+  link.href = qrCanvas.toDataURL("image/png");
+  link.click();
+});
+
+qrCloseBtn.addEventListener("click", closeQrModal);
+qrCloseX.addEventListener("click", closeQrModal);
+qrModal.addEventListener("click", (e) => {
+  if (e.target === qrModal) {
+    closeQrModal();
+  }
+});
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && !qrModal.classList.contains("hidden")) {
+    closeQrModal();
   }
 });
 
