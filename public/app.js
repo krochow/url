@@ -57,7 +57,7 @@ function showCreatedFeedback(link, shortUrl) {
     "flex flex-wrap items-center justify-between gap-3 rounded-xl border border-emerald-500/40 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-300";
   feedbackEl.innerHTML = `
     <span class="min-w-0 truncate">
-      Created short link: <a href="/${encodeURIComponent(link.slug)}" target="_blank" rel="noopener" class="font-mono font-semibold underline hover:text-emerald-200">${escapeHtml(shortUrl)}</a>
+      สร้างลิงก์ย่อสำเร็จ: <a href="/${encodeURIComponent(link.slug)}" target="_blank" rel="noopener" class="font-mono font-semibold underline hover:text-emerald-200">${escapeHtml(shortUrl)}</a>
     </span>
     <button
       id="banner-qr-btn"
@@ -80,7 +80,7 @@ function clearFeedback() {
 
 function openQrModal(slug, shortUrl, title) {
   if (!window.QRCode) {
-    showFeedback("QR Code library is still loading. Please try again.", true);
+    showFeedback("กำลังโหลดตัวสร้าง QR Code กรุณาลองใหม่อีกครั้ง", true);
     return;
   }
 
@@ -101,7 +101,7 @@ function openQrModal(slug, shortUrl, title) {
     },
     (err) => {
       if (err) {
-        showFeedback("Failed to generate QR code.", true);
+        showFeedback("ไม่สามารถสร้าง QR Code ได้", true);
         return;
       }
       qrModal.classList.remove("hidden");
@@ -137,10 +137,10 @@ function renderHeaderAuth() {
     authControls.innerHTML = `
       <a
         href="/api/auth/google"
-        class="inline-flex items-center gap-2 rounded-lg border border-slate-700 bg-slate-900 px-3.5 py-2 text-xs font-medium text-slate-200 transition hover:bg-slate-800"
+        class="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-slate-900/70 px-4 py-2 text-xs font-medium text-slate-200 backdrop-blur transition hover:bg-slate-800"
       >
         ${GOOGLE_G_SVG}
-        <span>Sign in</span>
+        <span>เข้าสู่ระบบ</span>
       </a>
     `;
     return;
@@ -148,7 +148,7 @@ function renderHeaderAuth() {
 
   const displayName = escapeHtml(currentUser.name || currentUser.email);
   const avatarHtml = currentUser.avatar_url
-    ? `<img src="${escapeHtml(currentUser.avatar_url)}" alt="${displayName}" class="h-8 w-8 rounded-full border border-slate-700 object-cover" referrerpolicy="no-referrer" />`
+    ? `<img src="${escapeHtml(currentUser.avatar_url)}" alt="${displayName}" class="h-8 w-8 rounded-full border border-white/20 object-cover" referrerpolicy="no-referrer" />`
     : `<div class="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-600 text-xs font-semibold text-white">${displayName.charAt(0).toUpperCase()}</div>`;
 
   authControls.innerHTML = `
@@ -161,9 +161,9 @@ function renderHeaderAuth() {
       <button
         id="logout-btn"
         type="button"
-        class="inline-flex items-center gap-1.5 rounded-lg border border-slate-700 bg-slate-900 px-3 py-1.5 text-xs font-medium text-slate-300 transition hover:bg-slate-800 hover:text-white disabled:opacity-50"
+        class="inline-flex items-center gap-1.5 rounded-xl border border-white/10 bg-slate-900/70 px-3.5 py-2 text-xs font-medium text-slate-300 backdrop-blur transition hover:bg-slate-800 hover:text-white disabled:opacity-50"
       >
-        Logout
+        ออกจากระบบ
       </button>
     </div>
   `;
@@ -171,7 +171,7 @@ function renderHeaderAuth() {
   const logoutBtn = document.getElementById("logout-btn");
   logoutBtn.addEventListener("click", async () => {
     logoutBtn.disabled = true;
-    logoutBtn.innerHTML = `${SPINNER_SVG}<span>Logging out...</span>`;
+    logoutBtn.innerHTML = `${SPINNER_SVG}<span>กำลังออก...</span>`;
     try {
       await fetch("/api/auth/logout", { method: "POST" });
     } finally {
@@ -184,21 +184,21 @@ async function copyToClipboard(text, buttonEl) {
   try {
     await navigator.clipboard.writeText(text);
     const original = buttonEl.textContent;
-    buttonEl.textContent = "Copied!";
+    buttonEl.textContent = "คัดลอกแล้ว!";
     buttonEl.classList.add("border-emerald-500/50", "text-emerald-300");
     setTimeout(() => {
       buttonEl.textContent = original;
       buttonEl.classList.remove("border-emerald-500/50", "text-emerald-300");
     }, 1500);
   } catch {
-    showFeedback(`Copy failed. Short URL: ${text}`, true);
+    showFeedback(`คัดลอกไม่สำเร็จ กรุณาคัดลอกด้วยตนเอง: ${text}`, true);
   }
 }
 
 async function deleteLink(id, buttonEl) {
   clearFeedback();
   buttonEl.disabled = true;
-  buttonEl.textContent = "Deleting...";
+  buttonEl.textContent = "กำลังลบ...";
 
   try {
     const res = await fetch(`/api/links/${id}`, { method: "DELETE" });
@@ -208,21 +208,21 @@ async function deleteLink(id, buttonEl) {
     }
     if (!res.ok) {
       const data = await res.json().catch(() => ({}));
-      throw new Error(data.error || "Failed to delete link");
+      throw new Error(data.error || "ไม่สามารถลบลิงก์ได้");
     }
     await loadLinks();
   } catch (err) {
     showFeedback(err.message, true);
     buttonEl.disabled = false;
-    buttonEl.textContent = "Delete";
+    buttonEl.textContent = "ลบ";
   }
 }
 
 function renderLinks(links) {
   if (!links.length) {
     linksContainer.innerHTML = `
-      <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-8 text-center text-sm text-slate-400">
-        No short links yet. Create your first one above!
+      <div class="rounded-2xl border border-white/10 bg-slate-900/40 p-8 text-center text-sm text-slate-400 backdrop-blur-xl">
+        ยังไม่มีลิงก์ย่อ สร้างลิงก์แรกของคุณได้เลยด้านบน!
       </div>
     `;
     return;
@@ -235,7 +235,7 @@ function renderLinks(links) {
         ? `<span class="text-sm font-medium text-white">${escapeHtml(link.title)}</span>`
         : "";
       return `
-        <article class="flex flex-col gap-3 rounded-2xl border border-slate-800 bg-slate-900/60 p-4 transition hover:border-slate-700 sm:flex-row sm:items-center sm:justify-between">
+        <article class="flex flex-col gap-3 rounded-2xl border border-white/10 bg-slate-900/60 p-4 backdrop-blur-xl transition hover:border-indigo-500/30 sm:flex-row sm:items-center sm:justify-between">
           <div class="min-w-0 flex-1 space-y-1">
             <div class="flex flex-wrap items-center gap-2">
               <a href="/${encodeURIComponent(link.slug)}" target="_blank" rel="noopener" class="font-mono text-sm font-semibold text-indigo-400 hover:text-indigo-300">
@@ -248,15 +248,15 @@ function renderLinks(links) {
             </p>
           </div>
           <div class="flex flex-wrap items-center gap-2 shrink-0">
-            <span class="rounded-lg border border-slate-700/80 bg-slate-800/80 px-2.5 py-1 text-xs font-medium text-slate-300">
-              ${link.clicks} ${link.clicks === 1 ? "click" : "clicks"}
+            <span class="rounded-lg border border-white/10 bg-slate-800/80 px-2.5 py-1 text-xs font-medium text-slate-300">
+              ${link.clicks} คลิก
             </span>
             <button
               type="button"
               data-copy="${escapeHtml(shortUrl)}"
-              class="copy-btn rounded-lg border border-slate-700 bg-slate-800 px-3 py-1.5 text-xs font-medium text-slate-200 transition hover:bg-slate-700"
+              class="copy-btn rounded-lg border border-white/10 bg-slate-800 px-3 py-1.5 text-xs font-medium text-slate-200 transition hover:bg-slate-700"
             >
-              Copy
+              คัดลอก
             </button>
             <button
               type="button"
@@ -272,7 +272,7 @@ function renderLinks(links) {
               data-delete="${link.id}"
               class="delete-btn rounded-lg border border-rose-500/20 bg-rose-500/10 px-3 py-1.5 text-xs font-medium text-rose-300 transition hover:bg-rose-500/20 disabled:opacity-50"
             >
-              Delete
+              ลบ
             </button>
           </div>
         </article>
@@ -298,9 +298,9 @@ function renderLinks(links) {
 async function loadLinks() {
   refreshBtn.disabled = true;
   linksContainer.innerHTML = `
-    <div class="flex items-center justify-center gap-2 rounded-2xl border border-slate-800 bg-slate-900/40 p-8 text-sm text-slate-400">
+    <div class="flex items-center justify-center gap-2 rounded-2xl border border-white/10 bg-slate-900/40 p-8 text-sm text-slate-400 backdrop-blur-xl">
       ${SPINNER_SVG}
-      <span>Loading your links...</span>
+      <span>กำลังโหลดรายการลิงก์ของคุณ...</span>
     </div>
   `;
 
@@ -312,7 +312,7 @@ async function loadLinks() {
     }
     const data = await res.json();
     if (!res.ok) {
-      throw new Error(data.error || "Failed to load links");
+      throw new Error(data.error || "ไม่สามารถโหลดรายการลิงก์ได้");
     }
     renderLinks(data.links || []);
   } catch (err) {
@@ -350,7 +350,7 @@ form.addEventListener("submit", async (e) => {
   clearFeedback();
 
   submitBtn.disabled = true;
-  submitBtn.innerHTML = `${SPINNER_SVG}<span>Creating...</span>`;
+  submitBtn.innerHTML = `${SPINNER_SVG}<span>กำลังสร้างลิงก์...</span>`;
 
   try {
     const payload = {
@@ -372,7 +372,7 @@ form.addEventListener("submit", async (e) => {
 
     const data = await res.json().catch(() => ({}));
     if (!res.ok) {
-      throw new Error(data.error || "Failed to create short link");
+      throw new Error(data.error || "ไม่สามารถสร้างลิงก์ย่อได้");
     }
 
     const shortUrl = `${window.location.origin}/${data.link.slug}`;
@@ -383,7 +383,7 @@ form.addEventListener("submit", async (e) => {
     showFeedback(err.message, true);
   } finally {
     submitBtn.disabled = false;
-    submitBtn.innerHTML = "<span>Shorten URL</span>";
+    submitBtn.innerHTML = "<span>ย่อลิงก์ทันที</span>";
   }
 });
 

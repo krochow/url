@@ -1,22 +1,37 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>EdgeShort — Custom URL Shortener</title>
+    <title>ระบบย่อลิงก์ — โรงเรียนบ้านสุไหงโก-ลก</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Prompt:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="/styles.css" />
   </head>
-  <body class="min-h-screen bg-slate-950 text-slate-100 antialiased">
-    <div class="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
+  <body class="relative min-h-screen flex flex-col bg-slate-950 text-slate-100 antialiased selection:bg-indigo-500/30 selection:text-indigo-200">
+    <!-- Ambient Radial Glow Backdrops -->
+    <div class="pointer-events-none fixed inset-0 -z-10 overflow-hidden" aria-hidden="true">
+      <div class="absolute -top-40 left-1/4 h-96 w-96 rounded-full bg-indigo-600/20 blur-3xl"></div>
+      <div class="absolute top-1/3 -right-24 h-80 w-80 rounded-full bg-violet-600/15 blur-3xl"></div>
+      <div class="absolute -bottom-32 left-1/3 h-96 w-96 rounded-full bg-cyan-500/15 blur-3xl"></div>
+    </div>
+
+    <div class="mx-auto flex w-full max-w-4xl flex-1 flex-col px-4 py-8 sm:px-6 lg:px-8">
       <!-- Top Navigation Bar -->
-      <header class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800/80 pb-6">
-        <a href="/" class="flex items-center gap-3">
-          <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-600 font-bold text-white shadow-lg shadow-indigo-600/25">
-            ES
+      <header class="flex flex-wrap items-center justify-between gap-4 border-b border-white/10 pb-6">
+        <a href="/" class="flex items-center gap-3.5 group">
+          <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 via-violet-500 to-cyan-500 font-bold text-white shadow-lg shadow-indigo-600/30 transition group-hover:scale-105">
+            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+            </svg>
           </div>
           <div>
-            <h1 class="text-xl font-semibold tracking-tight text-white">EdgeShort</h1>
-            <p class="text-xs text-slate-400">Powered by Cloudflare Pages, Hono &amp; D1</p>
+            <h1 class="text-xl font-semibold tracking-tight text-white">ระบบย่อลิงก์</h1>
+            <p class="text-xs text-slate-400">โรงเรียนบ้านสุไหงโก-ลก</p>
           </div>
         </a>
 
@@ -25,31 +40,36 @@
       </header>
 
       <!-- Initial Loading State -->
-      <section id="auth-loading" class="mt-16 flex flex-col items-center justify-center gap-3 py-12 text-slate-400">
-        <svg class="h-8 w-8 animate-spin text-indigo-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+      <section id="auth-loading" class="mt-16 flex flex-1 flex-col items-center justify-center gap-3 py-12 text-slate-400">
+        <svg class="h-8 w-8 animate-spin text-indigo-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
           <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
           <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
         </svg>
-        <p class="text-sm">Checking your session...</p>
+        <p class="text-sm">กำลังตรวจสอบสถานะการเข้าสู่ระบบ...</p>
       </section>
 
       <!-- Logged-Out Landing View -->
-      <section id="landing-view" class="hidden mt-12">
-        <div class="rounded-3xl border border-slate-800 bg-gradient-to-b from-slate-900/90 to-slate-900/50 p-8 sm:p-12 text-center shadow-2xl">
-          <div class="mx-auto mb-5 inline-flex items-center gap-2 rounded-full border border-indigo-500/30 bg-indigo-500/10 px-3.5 py-1 text-xs font-medium text-indigo-300">
-            Edge-fast URL shortening on Cloudflare D1
+      <section id="landing-view" class="hidden mt-10 flex-1 space-y-8">
+        <!-- Hero Card -->
+        <div class="relative overflow-hidden rounded-3xl border border-white/10 bg-slate-900/60 p-8 sm:p-12 text-center shadow-2xl backdrop-blur-xl">
+          <div class="mx-auto mb-6 inline-flex items-center gap-2 rounded-full border border-indigo-400/30 bg-indigo-500/10 px-4 py-1.5 text-xs font-medium text-indigo-300">
+            <span class="h-2 w-2 rounded-full bg-cyan-400 animate-pulse"></span>
+            <span>รวดเร็ว ปลอดภัย บนระบบคลาวด์ Cloudflare</span>
           </div>
-          <h2 class="text-3xl font-bold tracking-tight text-white sm:text-4xl">
-            Shorten, customize, and track your links.
+
+          <h2 class="text-3xl font-bold tracking-tight sm:text-5xl">
+            <span class="bg-gradient-to-r from-indigo-300 via-violet-300 to-cyan-300 bg-clip-text text-transparent">
+              ลิงก์คุณยาวใช่มั้ย?
+            </span>
           </h2>
-          <p class="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-slate-400 sm:text-base">
-            Create clean custom aliases, track real-time click counts at the edge, and manage all your links securely in one dashboard.
+          <p class="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-slate-300 sm:text-base">
+            เปลี่ยนลิงก์ยาวให้สั้น จำง่าย พร้อมสร้าง QR Code และติดตามยอดคลิกได้ในที่เดียว
           </p>
 
           <div class="mt-8 flex justify-center">
             <a
               href="/api/auth/google"
-              class="inline-flex items-center gap-3 rounded-xl bg-white px-6 py-3 text-sm font-semibold text-slate-900 shadow-lg transition hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-slate-950"
+              class="inline-flex items-center gap-3 rounded-2xl bg-white px-7 py-3.5 text-sm font-semibold text-slate-900 shadow-xl shadow-indigo-500/10 transition hover:-translate-y-0.5 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-slate-950"
             >
               <!-- Official Google 'G' Logo SVG -->
               <svg class="h-5 w-5" viewBox="0 0 24 24" aria-hidden="true">
@@ -58,21 +78,60 @@
                 <path fill="#FBBC05" d="M5.28 14.24c-.24-.72-.38-1.49-.38-2.24s.14-1.52.38-2.24V6.62H1.29C.47 8.24 0 10.06 0 12s.47 3.76 1.29 5.38l3.99-3.14z"/>
                 <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.7 1.29 6.62l3.99 3.14c.95-2.85 3.6-4.96 6.72-4.96z"/>
               </svg>
-              <span>Sign in with Google</span>
+              <span>เข้าสู่ระบบด้วย Google</span>
             </a>
+          </div>
+        </div>
+
+        <!-- 3-Column Feature Highlight Grid -->
+        <div class="grid gap-4 sm:grid-cols-3">
+          <div class="rounded-2xl border border-white/10 bg-slate-900/50 p-5 backdrop-blur-xl transition hover:border-indigo-500/40">
+            <div class="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-500/15 text-indigo-300">
+              <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+            </div>
+            <h3 class="text-sm font-semibold text-white">ย่อลิงก์ไวทันใจ &amp; ตั้งชื่อเองได้</h3>
+            <p class="mt-1.5 text-xs leading-relaxed text-slate-400">
+              สร้างลิงก์สั้นอัตโนมัติ หรือกำหนดชื่อลิงก์ (Alias) ที่สื่อความหมายและจำง่ายได้ทันที
+            </p>
+          </div>
+
+          <div class="rounded-2xl border border-white/10 bg-slate-900/50 p-5 backdrop-blur-xl transition hover:border-violet-500/40">
+            <div class="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-violet-500/15 text-violet-300">
+              <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
+              </svg>
+            </div>
+            <h3 class="text-sm font-semibold text-white">สร้าง QR Code ดาวน์โหลดได้ทันที</h3>
+            <p class="mt-1.5 text-xs leading-relaxed text-slate-400">
+              แปลงลิงก์ย่อเป็นภาพ QR Code ความคมชัดสูง พร้อมปุ่มดาวน์โหลดเป็นไฟล์ PNG ใช้งานได้ทันที
+            </p>
+          </div>
+
+          <div class="rounded-2xl border border-white/10 bg-slate-900/50 p-5 backdrop-blur-xl transition hover:border-cyan-500/40">
+            <div class="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-cyan-500/15 text-cyan-300">
+              <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+            </div>
+            <h3 class="text-sm font-semibold text-white">นับสถิติการคลิกแบบเรียลไทม์</h3>
+            <p class="mt-1.5 text-xs leading-relaxed text-slate-400">
+              ติดตามจำนวนผู้เข้าชมทุกลิงก์แบบเรียลไทม์ ประมวลผลรวดเร็วบนเครือข่าย Edge ของ Cloudflare
+            </p>
           </div>
         </div>
       </section>
 
       <!-- Logged-In Dashboard View -->
-      <main id="dashboard-view" class="hidden">
+      <main id="dashboard-view" class="hidden flex-1">
         <!-- Shorten Form -->
-        <section class="mt-8 rounded-2xl border border-slate-800 bg-slate-900/70 p-6 shadow-xl">
-          <h2 class="text-base font-semibold text-white">Create a short link</h2>
+        <section class="mt-8 rounded-3xl border border-white/10 bg-slate-900/60 p-6 sm:p-7 shadow-2xl backdrop-blur-xl">
+          <h2 class="text-base font-semibold text-white">สร้างลิงก์ย่อใหม่</h2>
           <form id="shorten-form" class="mt-4 space-y-4">
             <div>
-              <label for="target-url" class="block text-xs font-medium uppercase tracking-wider text-slate-400">
-                Original URL *
+              <label for="target-url" class="block text-xs font-medium text-slate-300">
+                ลิงก์ต้นฉบับ (URL) *
               </label>
               <input
                 id="target-url"
@@ -80,36 +139,36 @@
                 type="url"
                 required
                 placeholder="https://example.com/very/long/url"
-                class="mt-1.5 w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/30"
+                class="mt-1.5 w-full rounded-xl border border-white/10 bg-slate-950/80 px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/30"
               />
             </div>
 
             <div class="grid gap-4 sm:grid-cols-2">
               <div>
-                <label for="custom-slug" class="block text-xs font-medium uppercase tracking-wider text-slate-400">
-                  Custom Alias (Optional)
+                <label for="custom-slug" class="block text-xs font-medium text-slate-300">
+                  ตั้งชื่อลิงก์เอง (ไม่บังคับ)
                 </label>
                 <input
                   id="custom-slug"
                   name="slug"
                   type="text"
                   pattern="[a-zA-Z0-9_-]{3,32}"
-                  placeholder="my-link"
-                  class="mt-1.5 w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/30"
+                  placeholder="เช่น activity-69"
+                  class="mt-1.5 w-full rounded-xl border border-white/10 bg-slate-950/80 px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/30"
                 />
               </div>
 
               <div>
-                <label for="link-title" class="block text-xs font-medium uppercase tracking-wider text-slate-400">
-                  Title (Optional)
+                <label for="link-title" class="block text-xs font-medium text-slate-300">
+                  ชื่อกำกับลิงก์ (ไม่บังคับ)
                 </label>
                 <input
                   id="link-title"
                   name="title"
                   type="text"
                   maxlength="100"
-                  placeholder="Landing page"
-                  class="mt-1.5 w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/30"
+                  placeholder="เช่น ระบบอัลบั้มภาพกิจกรรม"
+                  class="mt-1.5 w-full rounded-xl border border-white/10 bg-slate-950/80 px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/30"
                 />
               </div>
             </div>
@@ -120,9 +179,9 @@
               <button
                 id="submit-btn"
                 type="submit"
-                class="inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-medium text-white shadow-lg shadow-indigo-600/20 transition hover:bg-indigo-500 disabled:cursor-not-allowed disabled:opacity-50"
+                class="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 px-6 py-2.5 text-sm font-medium text-white shadow-lg shadow-indigo-600/25 transition hover:from-indigo-500 hover:to-violet-500 disabled:cursor-not-allowed disabled:opacity-50"
               >
-                <span>Shorten URL</span>
+                <span>ย่อลิงก์ทันที</span>
               </button>
             </div>
           </form>
@@ -131,19 +190,26 @@
         <!-- Links List -->
         <section class="mt-8">
           <div class="flex items-center justify-between">
-            <h2 class="text-base font-semibold text-white">Your Short Links</h2>
+            <h2 class="text-base font-semibold text-white">ลิงก์ย่อของคุณ</h2>
             <button
               id="refresh-btn"
               type="button"
-              class="inline-flex items-center gap-1.5 text-xs font-medium text-indigo-400 transition hover:text-indigo-300 disabled:opacity-50"
+              class="inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-slate-900/60 px-3 py-1.5 text-xs font-medium text-indigo-300 transition hover:bg-slate-800 hover:text-indigo-200 disabled:opacity-50"
             >
-              Refresh
+              รีเฟรช
             </button>
           </div>
 
           <div id="links-container" class="mt-4 space-y-3"></div>
         </section>
       </main>
+
+      <!-- Footer Attribution -->
+      <footer class="mt-12 border-t border-white/10 pt-6 text-center">
+        <p class="text-xs font-medium text-slate-400 sm:text-sm">
+          ผู้พัฒนา : <span class="text-slate-200">ครูชวลิต แดงเพ็ง</span> โรงเรียนบ้านสุไหงโก-ลก
+        </p>
+      </footer>
     </div>
 
     <!-- QR Code Modal -->
@@ -154,7 +220,7 @@
       aria-modal="true"
       aria-labelledby="qr-modal-title"
     >
-      <div class="w-full max-w-sm rounded-2xl border border-slate-800 bg-slate-900 p-6 shadow-2xl">
+      <div class="w-full max-w-sm rounded-3xl border border-white/10 bg-slate-900/95 p-6 shadow-2xl backdrop-blur-xl">
         <div class="flex items-start justify-between gap-3">
           <div class="min-w-0">
             <h3 id="qr-modal-title" class="truncate text-base font-semibold text-white">QR Code</h3>
@@ -163,7 +229,7 @@
           <button
             id="qr-close-x"
             type="button"
-            aria-label="Close modal"
+            aria-label="ปิดหน้าต่าง"
             class="rounded-lg p-1.5 text-slate-400 transition hover:bg-slate-800 hover:text-white"
           >
             <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -182,16 +248,16 @@
           <button
             id="qr-download-btn"
             type="button"
-            class="flex-1 inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-medium text-white shadow-lg shadow-indigo-600/20 transition hover:bg-indigo-500"
+            class="flex-1 inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 px-4 py-2.5 text-sm font-medium text-white shadow-lg shadow-indigo-600/20 transition hover:from-indigo-500 hover:to-violet-500"
           >
-            Download PNG
+            ดาวน์โหลด PNG
           </button>
           <button
             id="qr-close-btn"
             type="button"
-            class="rounded-xl border border-slate-700 bg-slate-800 px-4 py-2.5 text-sm font-medium text-slate-200 transition hover:bg-slate-700"
+            class="rounded-xl border border-white/10 bg-slate-800 px-4 py-2.5 text-sm font-medium text-slate-200 transition hover:bg-slate-700"
           >
-            Close
+            ปิด
           </button>
         </div>
       </div>
