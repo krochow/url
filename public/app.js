@@ -15,7 +15,7 @@ const refreshBtn = document.getElementById("refresh-btn");
 const qrModal = document.getElementById("qr-modal");
 const qrModalTitle = document.getElementById("qr-modal-title");
 const qrModalUrl = document.getElementById("qr-modal-url");
-const qrCanvas = document.getElementById("qr-canvas");
+const qrContainer = document.getElementById("qr-container");
 const qrDownloadBtn = document.getElementById("qr-download-btn");
 const qrCloseBtn = document.getElementById("qr-close-btn");
 const qrCloseX = document.getElementById("qr-close-x");
@@ -79,7 +79,7 @@ function clearFeedback() {
 }
 
 function openQrModal(slug, shortUrl, title) {
-  if (!window.QRCode) {
+  if (typeof window.QRCode !== "function") {
     showFeedback("กำลังโหลดตัวสร้าง QR Code กรุณาลองใหม่อีกครั้ง", true);
     return;
   }
@@ -87,26 +87,18 @@ function openQrModal(slug, shortUrl, title) {
   activeQrSlug = slug;
   qrModalTitle.textContent = title ? title : `/${slug}`;
   qrModalUrl.textContent = shortUrl;
+  qrContainer.innerHTML = "";
 
-  window.QRCode.toCanvas(
-    qrCanvas,
-    shortUrl,
-    {
-      width: 224,
-      margin: 2,
-      color: {
-        dark: "#0f172a",
-        light: "#ffffff"
-      }
-    },
-    (err) => {
-      if (err) {
-        showFeedback("ไม่สามารถสร้าง QR Code ได้", true);
-        return;
-      }
-      qrModal.classList.remove("hidden");
-    }
-  );
+  new window.QRCode(qrContainer, {
+    text: shortUrl,
+    width: 220,
+    height: 220,
+    colorDark: "#000000",
+    colorLight: "#ffffff",
+    correctLevel: window.QRCode.CorrectLevel.H
+  });
+
+  qrModal.classList.remove("hidden");
 }
 
 function closeQrModal() {
@@ -389,9 +381,16 @@ form.addEventListener("submit", async (e) => {
 
 qrDownloadBtn.addEventListener("click", () => {
   if (!activeQrSlug) return;
+  const canvas = qrContainer.querySelector("canvas");
+  const img = qrContainer.querySelector("img");
+  const dataUrl = canvas ? canvas.toDataURL("image/png") : img?.src || "";
+  if (!dataUrl) {
+    showFeedback("ไม่สามารถดาวน์โหลด QR Code ได้", true);
+    return;
+  }
   const link = document.createElement("a");
   link.download = `${activeQrSlug}-qrcode.png`;
-  link.href = qrCanvas.toDataURL("image/png");
+  link.href = dataUrl;
   link.click();
 });
 
