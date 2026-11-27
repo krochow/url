@@ -1,0 +1,25 @@
+{
+  "name": "cloudflare-url-shortener",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Custom URL Shortener built with Cloudflare Pages Functions, Hono, D1, TypeScript, and Tailwind CSS",
+  "scripts": {
+    "dev": "npm run build:css && wrangler pages dev public",
+    "build": "npm run typecheck && npm run build:css",
+    "build:css": "tailwindcss -i ./src/styles/input.css -o ./public/styles.css --minify",
+    "typecheck": "tsc --noEmit",
+    "db:init:local": "wrangler d1 execute url-shortener-db --local --file=./schema.sql",
+    "db:init:remote": "wrangler d1 execute url-shortener-db --remote --file=./schema.sql",
+    "deploy": "npm run build && wrangler pages deploy public"
+  },
+  "dependencies": {
+    "arctic": "^3.7.0",
+    "hono": "^4.7.0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20250214.0",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.7.3",
+    "wrangler": "^3.109.0"
+  }
+}

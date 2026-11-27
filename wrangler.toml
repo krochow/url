@@ -1,0 +1,14 @@
+name = "url-shortener"
+compatibility_date = "2025-02-01"
+pages_build_output_dir = "public"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "url-shortener-db"
+database_id = "6ff2e373-ac93-44c6-8d41-18aea0d5e98e"
+
+# Phase 2 (Google OAuth) environment variables:
+# Set secrets via `wrangler pages secret put <NAME>` or Cloudflare Dashboard,
+# and non-secret vars under [vars] below.
+# [vars]
+# APP_URL = "https://your-domain.pages.dev"
